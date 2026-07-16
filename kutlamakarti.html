@@ -676,6 +676,13 @@
                         <button id="resetTextPosBtn" class="btn-secondary" style="padding:4px 12px;">Konum Sıfırla</button>
                         <label><input type="checkbox" id="textShadow"> ✨ Metin Gölgesi</label>
                     </div>
+                    <!-- YENİ: Satır Aralığı kontrolü -->
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-top: 12px; padding-top: 8px; border-top: 1px dashed #e2ceff;">
+                        <label>📏 Satır Aralığı:</label>
+                        <input type="range" id="lineHeightSlider" min="0.4" max="2.0" step="0.05" value="1.35" style="width:160px;">
+                        <span id="lineHeightVal">1.35</span>
+                        <small style="color:#6b3ea5;">(0.4 – 2.0)</small>
+                    </div>
                 </div>
 
                 <div class="multi-border-panel">
@@ -1110,7 +1117,19 @@
         }
         if(overlayImage){ let dx=overlayX-overlayWidth/2, dy=overlayY-overlayHeight/2; ctx.drawImage(overlayImage,dx,dy,overlayWidth,overlayHeight); }
         let raw = getCardText();
-        if(raw && raw.trim()){ let fontSize=parseInt(document.getElementById("fontSize").value), fontWeight=document.getElementById("fontWeight").value, align=document.getElementById("textAlign").value; ctx.font=fontWeight+" "+fontSize+"px '"+currentFont+"', cursive"; ctx.fillStyle=textColorHidden.value; if(textShadowCheck.checked){ ctx.shadowColor="rgba(0,0,0,0.3)"; ctx.shadowBlur=4; ctx.shadowOffsetX=2; ctx.shadowOffsetY=2; } else ctx.shadowColor="transparent";
+        if(raw && raw.trim()){ 
+            let fontSize=parseInt(document.getElementById("fontSize").value), 
+                fontWeight=document.getElementById("fontWeight").value, 
+                align=document.getElementById("textAlign").value,
+                lineHeightMult = parseFloat(document.getElementById("lineHeightSlider").value); // SATIR ARALIĞI
+            ctx.font=fontWeight+" "+fontSize+"px '"+currentFont+"', cursive"; 
+            ctx.fillStyle=textColorHidden.value; 
+            if(textShadowCheck.checked){ 
+                ctx.shadowColor="rgba(0,0,0,0.3)"; 
+                ctx.shadowBlur=4; 
+                ctx.shadowOffsetX=2; 
+                ctx.shadowOffsetY=2; 
+            } else ctx.shadowColor="transparent";
             let maxW=canvasWidth-80, lines; 
             
             // Serbest modda satır sonlarını koru, diğer modlarda da koru (artık tüm modlarda aynı wrapText kullanılıyor)
@@ -1123,22 +1142,22 @@
                     let w=ctx.measureText(lines[i]).width; 
                     if(w>maxLineWidth) maxLineWidth=w; 
                 } 
-                let startX=textPosX-(maxLineWidth/2), lineH=fontSize*1.35, totalH=lines.length*lineH, startY=textPosY-(totalH/2); 
+                let startX=textPosX-(maxLineWidth/2), lineH=fontSize * lineHeightMult, totalH=lines.length*lineH, startY=textPosY-(totalH/2); 
                 for(let i=0;i<lines.length;i++) ctx.fillText(lines[i],startX,startY+i*lineH); 
             }
             else if(align==='center'){ 
                 ctx.textAlign='center'; 
-                let startX=canvasWidth/2, lineH=fontSize*1.35, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
+                let startX=canvasWidth/2, lineH=fontSize * lineHeightMult, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
                 for(let i=0;i<lines.length;i++) ctx.fillText(lines[i],startX,startY+i*lineH); 
             }
             else if(align==='right'){ 
                 ctx.textAlign='right'; 
-                let startX=canvasWidth-60, lineH=fontSize*1.35, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
+                let startX=canvasWidth-60, lineH=fontSize * lineHeightMult, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
                 for(let i=0;i<lines.length;i++) ctx.fillText(lines[i],startX,startY+i*lineH); 
             }
             else{ 
                 ctx.textAlign='left'; 
-                let startX=60, lineH=fontSize*1.35, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
+                let startX=60, lineH=fontSize * lineHeightMult, totalH=lines.length*lineH, startY=textPosY-totalH/2; 
                 for(let i=0;i<lines.length;i++) ctx.fillText(lines[i],startX,startY+i*lineH); 
             }
             ctx.shadowColor="transparent";
@@ -1192,9 +1211,17 @@
     document.getElementById("clearTextBtn").addEventListener("click",()=>{ setCardText(""); resetTextPosition(); drawCard(); showAlert("Metin temizlendi");});
     textShadowCheck.addEventListener("change",drawCard);
     document.getElementById("applyBorderStyleBtn").addEventListener("click", () => { drawCard(); showAlert("Kenarlık stili güncellendi"); });
+
+    // SATIR ARALIĞI SLIDER
+    const lineHeightSlider = document.getElementById("lineHeightSlider");
+    const lineHeightVal = document.getElementById("lineHeightVal");
+    lineHeightSlider.addEventListener("input", function() {
+        lineHeightVal.innerText = parseFloat(this.value).toFixed(2);
+        drawCard();
+    });
     
-    document.getElementById("saveProjectBtn").addEventListener("click", () => { let projectData={ canvasWidth,canvasHeight, textPosX,textPosY, overlayX,overlayY,overlayWidth,overlayHeight, currentFont, textColor:textColorHidden.value, bgColor:bgColorHidden.value, borderOuterColor:borderOuterHidden.value, borderInnerColor:borderInnerHidden.value, borderThirdColor:borderThirdHidden.value, borderDoubleColor1:borderDoubleColor1Hidden.value, borderDoubleColor2:borderDoubleColor2Hidden.value, borderWidth:borderWidthSlider.value, borderOffset, borderThirdStyle:borderThirdStyleSelect.value, borderLayerCount:borderLayerCountSelect.value, textShadow:textShadowCheck.checked, gradientToggle:gradToggle.checked, gradColor1:gradColor1Hidden.value, gradColor2:gradColor2Hidden.value, gradAngle:gradAngle.value, fontSize:document.getElementById("fontSize").value, fontWeight:document.getElementById("fontWeight").value, textAlign:document.getElementById("textAlign").value, cardText:getCardText(), customFontsList, customIconsList, lastManualWidth, lastManualHeight }; const dataStr=JSON.stringify(projectData,null,2); const blob=new Blob([dataStr],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="kart_projesi.json"; a.click(); URL.revokeObjectURL(url); showAlert("✅ Proje kaydedildi!","success"); });
-    document.getElementById("loadProjectBtn").addEventListener("click", () => { const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json"; inp.onchange=e=>{ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); canvasWidth=data.canvasWidth||620; canvasHeight=data.canvasHeight||720; textPosX=data.textPosX||310; textPosY=data.textPosY||360; overlayX=data.overlayX||310; overlayY=data.overlayY||360; overlayWidth=data.overlayWidth||80; overlayHeight=data.overlayHeight||80; currentFont=data.currentFont||"Beau Rivage"; textColorHidden.value=data.textColor||"#4a2e6b"; bgColorHidden.value=data.bgColor||"#faf5ff"; borderOuterHidden.value=data.borderOuterColor||"#81778A"; borderInnerHidden.value=data.borderInnerColor||"#D9D6DE"; borderThirdHidden.value=data.borderThirdColor||"#B9B4BF"; if(data.borderDoubleColor1) borderDoubleColor1Hidden.value=data.borderDoubleColor1; if(data.borderDoubleColor2) borderDoubleColor2Hidden.value=data.borderDoubleColor2; borderWidthSlider.value=parseInt(data.borderWidth)||4; if(data.borderOffset!==undefined){ borderOffset=data.borderOffset; if(borderOffsetSlider) borderOffsetSlider.value=borderOffset; if(borderOffsetVal) borderOffsetVal.innerText=borderOffset+"px"; } borderThirdStyleSelect.value=data.borderThirdStyle||"solid"; borderLayerCountSelect.value=data.borderLayerCount||"3"; textShadowCheck.checked=data.textShadow||false; gradToggle.checked=data.gradientToggle!==undefined?data.gradientToggle:true; gradColor1Hidden.value=data.gradColor1||"#f9e5ff"; gradColor2Hidden.value=data.gradColor2||"#ffffff"; gradAngle.value=data.gradAngle||"0"; document.getElementById("fontSize").value=data.fontSize||40; document.getElementById("fontWeight").value=data.fontWeight||"700"; document.getElementById("textAlign").value=data.textAlign||"center"; setCardText(data.cardText||""); if(data.customFontsList) customFontsList=data.customFontsList; if(data.customIconsList) customIconsList=data.customIconsList; if(data.lastManualWidth) lastManualWidth=data.lastManualWidth; if(data.lastManualHeight) lastManualHeight=data.lastManualHeight; document.getElementById("canvasWidthInput").value=canvasWidth; document.getElementById("canvasHeightInput").value=canvasHeight; document.getElementById("logoX").value=Math.round(overlayX); document.getElementById("logoY").value=Math.round(overlayY); document.getElementById("logoWidth").value=overlayWidth; document.getElementById("logoHeight").value=overlayHeight; document.getElementById("logoWidthVal").innerText=overlayWidth+"px"; document.getElementById("logoHeightVal").innerText=overlayHeight+"px"; document.getElementById("textX").value=Math.round(textPosX); document.getElementById("textY").value=Math.round(textPosY); logoWSlider.value=overlayWidth; logoHSlider.value=overlayHeight; isAutoSizeFromBg=false; updateAllPreviews(); renderFontList(); renderSymbolPanel(); updateCustomFontsFooter(); if(customIconsList.length>0) updateIconPreview(customIconsList); resetTextPosition(); drawCard(); showAlert("✅ Proje yüklendi!","success"); } catch(err){ showAlert("❌ Hata: Geçersiz proje!","error"); } }; reader.readAsText(file); }; inp.click(); });
+    document.getElementById("saveProjectBtn").addEventListener("click", () => { let projectData={ canvasWidth,canvasHeight, textPosX,textPosY, overlayX,overlayY,overlayWidth,overlayHeight, currentFont, textColor:textColorHidden.value, bgColor:bgColorHidden.value, borderOuterColor:borderOuterHidden.value, borderInnerColor:borderInnerHidden.value, borderThirdColor:borderThirdHidden.value, borderDoubleColor1:borderDoubleColor1Hidden.value, borderDoubleColor2:borderDoubleColor2Hidden.value, borderWidth:borderWidthSlider.value, borderOffset, borderThirdStyle:borderThirdStyleSelect.value, borderLayerCount:borderLayerCountSelect.value, textShadow:textShadowCheck.checked, gradientToggle:gradToggle.checked, gradColor1:gradColor1Hidden.value, gradColor2:gradColor2Hidden.value, gradAngle:gradAngle.value, fontSize:document.getElementById("fontSize").value, fontWeight:document.getElementById("fontWeight").value, textAlign:document.getElementById("textAlign").value, cardText:getCardText(), customFontsList, customIconsList, lastManualWidth, lastManualHeight, lineHeight:parseFloat(lineHeightSlider.value) }; const dataStr=JSON.stringify(projectData,null,2); const blob=new Blob([dataStr],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="kart_projesi.json"; a.click(); URL.revokeObjectURL(url); showAlert("✅ Proje kaydedildi!","success"); });
+    document.getElementById("loadProjectBtn").addEventListener("click", () => { const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json"; inp.onchange=e=>{ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); canvasWidth=data.canvasWidth||620; canvasHeight=data.canvasHeight||720; textPosX=data.textPosX||310; textPosY=data.textPosY||360; overlayX=data.overlayX||310; overlayY=data.overlayY||360; overlayWidth=data.overlayWidth||80; overlayHeight=data.overlayHeight||80; currentFont=data.currentFont||"Beau Rivage"; textColorHidden.value=data.textColor||"#4a2e6b"; bgColorHidden.value=data.bgColor||"#faf5ff"; borderOuterHidden.value=data.borderOuterColor||"#81778A"; borderInnerHidden.value=data.borderInnerColor||"#D9D6DE"; borderThirdHidden.value=data.borderThirdColor||"#B9B4BF"; if(data.borderDoubleColor1) borderDoubleColor1Hidden.value=data.borderDoubleColor1; if(data.borderDoubleColor2) borderDoubleColor2Hidden.value=data.borderDoubleColor2; borderWidthSlider.value=parseInt(data.borderWidth)||4; if(data.borderOffset!==undefined){ borderOffset=data.borderOffset; if(borderOffsetSlider) borderOffsetSlider.value=borderOffset; if(borderOffsetVal) borderOffsetVal.innerText=borderOffset+"px"; } borderThirdStyleSelect.value=data.borderThirdStyle||"solid"; borderLayerCountSelect.value=data.borderLayerCount||"3"; textShadowCheck.checked=data.textShadow||false; gradToggle.checked=data.gradientToggle!==undefined?data.gradientToggle:true; gradColor1Hidden.value=data.gradColor1||"#f9e5ff"; gradColor2Hidden.value=data.gradColor2||"#ffffff"; gradAngle.value=data.gradAngle||"0"; document.getElementById("fontSize").value=data.fontSize||40; document.getElementById("fontWeight").value=data.fontWeight||"700"; document.getElementById("textAlign").value=data.textAlign||"center"; setCardText(data.cardText||""); if(data.customFontsList) customFontsList=data.customFontsList; if(data.customIconsList) customIconsList=data.customIconsList; if(data.lastManualWidth) lastManualWidth=data.lastManualWidth; if(data.lastManualHeight) lastManualHeight=data.lastManualHeight; if(data.lineHeight && !isNaN(data.lineHeight)) { lineHeightSlider.value = data.lineHeight; lineHeightVal.innerText = data.lineHeight.toFixed(2); } document.getElementById("canvasWidthInput").value=canvasWidth; document.getElementById("canvasHeightInput").value=canvasHeight; document.getElementById("logoX").value=Math.round(overlayX); document.getElementById("logoY").value=Math.round(overlayY); document.getElementById("logoWidth").value=overlayWidth; document.getElementById("logoHeight").value=overlayHeight; document.getElementById("logoWidthVal").innerText=overlayWidth+"px"; document.getElementById("logoHeightVal").innerText=overlayHeight+"px"; document.getElementById("textX").value=Math.round(textPosX); document.getElementById("textY").value=Math.round(textPosY); logoWSlider.value=overlayWidth; logoHSlider.value=overlayHeight; isAutoSizeFromBg=false; updateAllPreviews(); renderFontList(); renderSymbolPanel(); updateCustomFontsFooter(); if(customIconsList.length>0) updateIconPreview(customIconsList); resetTextPosition(); drawCard(); showAlert("✅ Proje yüklendi!","success"); } catch(err){ showAlert("❌ Hata: Geçersiz proje!","error"); } }; reader.readAsText(file); }; inp.click(); });
     
     function downloadImage(format){ let link=document.createElement("a"); link.download=format==="png"?"kutlama_karti.png":"kutlama_karti.jpg"; link.href=canvas.toDataURL(format==="png"?"image/png":"image/jpeg",0.95); link.click(); showAlert(format.toUpperCase()+" indirildi!","success"); }
     document.getElementById("downloadPngBtn").addEventListener("click",()=>downloadImage("png")); document.getElementById("downloadJpgBtn").addEventListener("click",()=>downloadImage("jpg"));
