@@ -15,6 +15,10 @@
     "name": "Bein Sports 1 (Atom Spor)",
     "link": "https://corestream.siteyaptim.live//beintv/tracks-v1a1/mono.m3u8"
   },
+   {
+    "name": "BetConnect",
+    "link": "https://betconnectstreamserver1001.site/601/mono.m3u8"
+  },
   {
     "name": "A SPOR",
     "link": "https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/aspor/aspor_720p.m3u8"
@@ -31,8 +35,9 @@
     "name": "HALK TV",
     "link": "https://halktv-live.daioncdn.net/halktv/halktv.m3u8?app=web"
   },
+ 
   {
-    "name": "BetConnect",
-    "link": "https://betconnectstreamserver1001.site/601/mono.m3u8"
+    "name": "Sözcü Tv",
+    "link": "http://v2.iptvspor.de/live/HL4Rpi3t/pt9LVbRw/b07adce8-da27-419a-803a-bc0bebbbe11c.m3u"
   }
 ]
