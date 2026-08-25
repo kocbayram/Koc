@@ -23,6 +23,11 @@
     "name": "BEIN SPORTS 1(AB)",
     "link": "https://andro.226503.xyz/checklist/androstreamlivebiraz1.m3u8"
   },
+  
+  {
+    "name": "GZC SPOR TV",
+    "link": "ttp://cdn-gzcspor.yayin.com.tr/gzcspor/gzcspor/chunklist_w1535664882.m3u8"
+  },
   {
     "name": "A SPOR",
     "link": "https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/aspor/aspor_720p.m3u8"
@@ -43,5 +48,4 @@
     "name": "Sözcü Tv",
     "link": "http://v2.iptvspor.de/live/HL4Rpi3t/pt9LVbRw/b07adce8-da27-419a-803a-bc0bebbbe11c.m3u"
   }
-  
 ]
