@@ -1,0 +1,4 @@
+{ "id": "org.izlelan.catalog", "version": "1.2.1", "name": "izlelan", "description": "", "types": [ "movie", "series" ], "resources": [ "catalog", "meta" ], "idPrefixes": [ "tt", "tmdb:" ], "catalogs": [ { "type": "movie", "id": "top", "name": "Popüler", "extra": [ { "name": "search", "isRequired": false }, { "name": "skip", "isRequired": false }, { "name": "genre", "isRequired": false, "options": [ "Aksiyon", "Macera", "Animasyon", "Komedi", "Suç", "Belgesel", "Dram", "Aile", "Fantastik", "Korku", "Gizem", "Romantik", "Bilim Kurgu", "Gerilim", "Savaş", "Western" ] } ] }, { "type": "series", "id": "top", "name": "Popüler", "extra": [ { "name": "search", "isRequired": false }, { "name": "skip", "isRequired": false }, { "name": "genre", "isRequired": false, "options": [ "Aksiyon", "Macera", "Animasyon", "Komedi", "Suç", "Belgesel", "Dram", "Aile", "Fantastik", "Korku", "Gizem", "Romantik", "Bilim Kurgu", "Gerilim", "Savaş", "Western" ] } ] } ] }
+
+		 
+
